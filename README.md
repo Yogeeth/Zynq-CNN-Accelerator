@@ -1,0 +1,1 @@
+![System Block Design](./convolution-1/system.png)
