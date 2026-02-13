@@ -3,7 +3,31 @@
 ## Project Overview
 Designed and implemented a custom hardware-accelerated 2D Convolution engine on a Zynq SoC using hardware/software co-design principles. By offloading heavy matrix compute from the ARM Cortex-A9 processor to a custom FPGA IP via a dual-port AXI Direct Memory Access (DMA) pipeline, the system achieved a ~22x performance speedup with 100% data accuracy.
 
+## Repository Structure
+
+```text
+CNN_ON_ZYNQ/
+├── hdl/                        # Hardware Description Language (Verilog)
+│   ├── axi_conv_2d.v           # Top Level Wrapper (AXI Stream Interface)
+│   ├── conv_line_buffers.v     # Line Buffers (Row Caching)
+│   ├── conv_window_manager.v   # Sliding Window Generation
+│   ├── conv_math_core.v        # Arithmetic Core (MAC Units)
+│   └── conv_control_unit.v     # Output Formatting & Control
+├── sim/                        # Simulation
+│   └── tb_axi_conv_2d.v        # SystemVerilog Testbench
+├── pynq/                       # Software Driver
+│   ├── system.bit              # Generated Bitstream
+│   ├── system.hwh              # Hardware Handoff
+│   └── test_pynq.py            # Python Driver & Benchmark Script
+└── docs/                       # Documentation & Diagrams
+    └── system.png              # Block Design
+  ```
+
 ## System Architecture
+
+### Data Flow
+
+`Input Stream` → `Line Buffers` → `Window Manager` → `Math Core` → `Control Unit` → `Output Stream`
 
 ![Block Design Diagram](./system.png)
 *Figure 1: Vivado Block Design showing the custom IP integration.*
@@ -13,8 +37,6 @@ To maximize memory bandwidth and prevent interconnect bottlenecks, the architect
 * **Memory to PL (Read Path):** The ARM CPU allocates physically contiguous memory in DDR. The AXI DMA reads the image matrix via the dedicated `S_AXI_HP0` port, streaming data into the custom Verilog `axi_conv_2d` IP via AXI4-Stream.
 * **PL to Memory (Write Path):** The processed feature map streams out of the IP and is written back to DDR RAM via a secondary, dedicated `S_AXI_HP1` port. 
 * **Result:** Read and write transactions occur simultaneously without arbitrating for the same AXI interconnect pathway, significantly improving throughput for continuous data streaming.
-
-### The Control Path & Production-Grade Resets
 * **Configuration:** The ARM CPU configures the DMA registers via the `M_AXI_GP0` port (AXI4-Lite).
 * **Dual-Reset Domains:** To prevent AXI bus lock-ups during software-triggered resets, the architecture utilizes isolated reset domains:
   1. **System Interconnect Domain:** The AXI SmartConnect and AXI GPIO are tied to the main system reset, ensuring the CPU never loses connection to the memory-mapped bus.
@@ -43,6 +65,10 @@ Benchmarking was performed against a pure software implementation running on the
 
 
 **Average Stable Speedup:** ~22x
+
+- **LUT:** 30%
+- **FF:** 21%
+- **BRAM:** 4%
 
 ## Key Engineering Challenges Solved
 * **Memory Bandwidth Optimization:** Identified a potential bottleneck in routing bidirectional DMA traffic through a single HP port. Re-architected the block design to utilize `S_AXI_HP0` and `S_AXI_HP1`, isolating the memory streams.
