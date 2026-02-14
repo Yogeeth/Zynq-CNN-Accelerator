@@ -55,13 +55,35 @@ Key execution sequence:
 ## Performance Benchmarks
 Benchmarking was performed against a pure software implementation running on the Zynq ARM Cortex-A9.
 
-| Test Run | Hardware Time (ms) | Software Time (ms) | Speedup | Data Match |
+### Without DSP
+(First 10 Runs)
+It was executed 100 times after running a few preliminary tests.
+| Test Run | Hardware Time (ms) | Software Time (ms) | Speedup |  Match |
 | :------- | :----------------- | :----------------- | :------ | :--------- |
-| 1        | 4.52               | 68.21              | ~15.1x  | True       |
-| 2        | 2.96               | 66.38              | ~22.4x  | True       |
-| 3        | 2.97               | 85.10              | ~28.7x  | True       |
-| 4        | 2.97               | 66.18              | ~22.3x  | True       |
-| 5        | 2.96               | 66.37              | ~22.4x  | True       |
+| 1        | 0.42               | 65.45              | ~155.8x | True       |
+| 2        | 0.41               | 65.74              | ~160.3x | True       |
+| 3        | 0.41               | 65.44              | ~159.6x | True       |
+| 4        | 0.51               | 72.72              | ~142.6x | True       |
+| 5        | 0.41               | 65.13              | ~158.9x | True       |
+| 6        | 0.41               | 65.54              | ~159.9x | True       |
+| 7        | 0.41               | 82.66              | ~201.6x | True       |
+| 8        | 0.41               | 71.55              | ~174.5x | True       |
+| 9        | 0.41               | 65.15              | ~158.9x | True       |
+| 10       | 0.42               | 74.68              | ~177.8x | True       |
+
+### With DSP
+| Test Run | Hardware Time (ms) | Software Time (ms) | Speedup |  Match |
+| :------- | :----------------- | :----------------- | :------ | :--------- |
+| 1        | 0.43               | 65.51              | ~152.3x | True       |
+| 2        | 0.46               | 65.08              | ~141.5x | True       |
+| 3        | 0.42               | 65.28              | ~155.4x | True       |
+| 4        | 0.41               | 83.26              | ~203.1x | True       |
+| 5        | 0.42               | 65.23              | ~155.3x | True       |
+| 6        | 0.41               | 64.95              | ~158.4x | True       |
+| 7        | 0.45               | 83.21              | ~184.9x | True       |
+| 8        | 0.42               | 65.20              | ~155.2x | True       |
+| 9        | 0.41               | 65.59              | ~160.0x | True       |
+| 10       | 0.41               | 82.68              | ~201.7x | True       |
 
 
 **Average Stable Speedup:** ~22x

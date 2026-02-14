@@ -57,11 +57,15 @@ The custom IP (`axi_conv_2d`) is designed as a fully streaming AXI4-Stream perip
 * **Control Unit (`002control.v`):** Manages output timing, crops padding pixels, and generates the `tlast` signal for the DMA.
 
 ## Performance Benchmarks (v3.0)
+without DSP
 
 | Implementation | Kernel Size | Execution Time | Speedup |
 | :--- | :--- | :--- | :--- |
-| Python (SW) | 5x5 Signed | 66.4 ms | 1x |
-| **FPGA (HW)** | **5x5 Signed** | **2.9 ms** | **22.8x** |
+| Python (SW) | 5x5 Signed | 75.02 ms | 1x |
+| **FPGA (HW)** | **5x5 Signed** | **0.42 ms** | **179.06** |
+
+With DSP
+| **FPGA (HW)** | **5x5 Signed** | **0.43 ms** | **174.4** |
 
 
 
