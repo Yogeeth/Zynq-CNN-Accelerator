@@ -62,9 +62,11 @@ without DSP
 | Implementation | Kernel Size | Execution Time | Speedup |
 | :--- | :--- | :--- | :--- |
 | Python (SW) | 5x5 Signed | 75.02 ms | 1x |
-| **FPGA (HW)** | **5x5 Signed** | **0.42 ms** | **179.06** |
+| SciPy (SW) | 5x5 Signed | 1.2012 ms | 62.43x |
+| **FPGA (HW)** | **5x5 Signed** | **0.42 ms** | **179.06** | **2.86**(vs SciPy) |
 
 With DSP
+
 | **FPGA (HW)** | **5x5 Signed** | **0.43 ms** | **174.4** |
 
 
