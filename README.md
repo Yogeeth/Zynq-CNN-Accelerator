@@ -3,7 +3,7 @@
 This repository documents the iterative development of a custom 2D Convolution hardware accelerator on the Zynq-7000 (Cora Z7). The project transitions from a basic software-controlled prototype to a high-performance, fully pipelined 32-bit streaming engine.
 
 ## Project Overview
-* **Goal:** Accelerate image convolution (Sharpening Filter) using custom FPGA logic.
+* **Goal:** Accelerate image convolution (Sharpening & Edge Detection) using custom FPGA logic via AXI4-Stream.
 * **Target:** Zynq-7000 SoC (Cora Z7).
 * **Input/Output:** 28x28 Image processing (optimized for MNIST-scale inputs).
 * **Result:** **22.8x speedup** over optimized software implementation.
@@ -11,19 +11,31 @@ This repository documents the iterative development of a custom 2D Convolution h
 ## Repository Structure
 ```text
 
-├── convolution-1/          # v1: GPIO Implementation
-│   ├── conv_engine.v       # Basic arithmetic logic
-│   └── project.bit         # Bitstream
-├── convolution-2/          # v2: DMA Single-Port
-│   └── design.v            # Updated wrapper
-└── convolution-3/          # v3: Dual-Port Streaming (Current)
-    ├── 001top.v            # AXI Stream Wrapper
-    ├── 002control.v        # Output Logic
-    ├── 003linebuffer.v     # Row caching
-    ├── 004window_manger.v  # 5x5 Window generation
-    ├── 005convolution.v    # Math core (Sharpening)
-    ├── benchmark.ipynb     # Jupyter notebook for performance testing
-    └── tb.sv               # SystemVerilog Testbench
+├── convolution-1/             # v1: GPIO Implementation
+│   ├── conv_engine.v          # Basic arithmetic logic
+│   └── project.bit            # Bitstream
+├── convolution-2/             # v2: DMA Single-Port
+│   └── design.v               # Updated wrapper
+├── convolution-3/             # v3: Dual-Port Streaming
+│   ├── 001top.v               # AXI Stream Wrapper
+│   ├── 002control.v           # Output Logic
+│   ├── 003linebuffer.v        # Row caching
+│   ├── 004window_manger.v     # 5x5 Window generation
+│   ├── 005convolution.v       # Math core (Sharpening)
+│   ├── benchmark.ipynb        # Jupyter notebook for performance testing
+│   └── tb.sv                  # SystemVerilog Testbench
+├── Sobel Edge Detection/      # Hardware-accelerated Sobel filter
+│   ├── 0_Sobel_Core.v         # Top-level AXI Stream wrapper
+│   ├── 1_Line_Buffer.v        # Row caching for 3x3 window
+│   ├── 2_Window_gen.v         # 3x3 Window generation
+│   ├── 3_Sobel_gxgy.v         # X and Y gradient calculation
+│   ├── 4_Magnitude.v          # Magnitude calculation and thresholding
+│   ├── image.jpg              # Sample input image
+│   ├── images.jpg             # Additional sample image
+│   ├── Sobel.ipynb            # PYNQ Jupyter notebook for hardware testing
+│   ├── Sobel.md               # Documentation for the Sobel module
+│   └── system.png             # Block design / system diagram
+└── README.md                  # Main repository documentation
 ```
 ## The Evolution Roadmap
 This project was built in three distinct stages, optimizing data movement at every step:
@@ -67,7 +79,16 @@ without DSP
 
 With DSP
 
+| Implementation | Kernel Size | Execution Time | Speedup |
+|---|---|---|---|
 | **FPGA (HW)** | **5x5 Signed** | **0.43 ms** | **174.4** |
 
+> [!NOTE]
+> For logs check Inside convolution-3 README.md 
 
+> [!IMPORTANT]
+> **Under Active Verification**: The hardware implementation of this Sobel accelerator is complete and successfully running on the
+> physical board via PYNQ. However, strict cycle-accurate verification (RTL SystemVerilog simulation) is currently ongoing to finalize
+> AXI-Stream boundary logic, address pipeline flushing (dummy pixel padding), and fix a known 2-row image shift caused by initial
+> line-buffer validation delays. Feel free to explore the code, but note it is actively being refined!
 
